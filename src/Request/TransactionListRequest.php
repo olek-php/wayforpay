@@ -6,12 +6,12 @@ use DateTimeInterface;
 use Olek\WayForPay\Credential\Credential;
 use Olek\WayForPay\Response\TransactionListResponse;
 
-class TransactionListRequest extends ApiRequest
+readonly class TransactionListRequest extends ApiRequest
 {
     public function __construct(
         Credential $credential,
-        private readonly DateTimeInterface $dateBegin,
-        private readonly DateTimeInterface $dateEnd,
+        private DateTimeInterface $dateBegin,
+        private DateTimeInterface $dateEnd,
     ) {
         parent::__construct($credential);
     }

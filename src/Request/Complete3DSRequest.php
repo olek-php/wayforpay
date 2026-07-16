@@ -5,13 +5,13 @@ namespace Olek\WayForPay\Request;
 use Olek\WayForPay\Credential\Credential;
 use Olek\WayForPay\Response\Complete3DSResponse;
 
-class Complete3DSRequest extends ApiRequest
+readonly class Complete3DSRequest extends ApiRequest
 {
     public function __construct(
         Credential $credential,
-        private readonly string $authTicket,
-        private readonly string $d3Md,
-        private readonly string $d3Pares
+        private string $authTicket,
+        private string $d3Md,
+        private string $d3Pares
     ) {
         parent::__construct($credential);
     }

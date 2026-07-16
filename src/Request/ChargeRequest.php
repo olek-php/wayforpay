@@ -5,41 +5,39 @@ namespace Olek\WayForPay\Request;
 use DateTimeInterface;
 use InvalidArgumentException;
 use Olek\WayForPay\Collection\ProductCollection;
+use Olek\WayForPay\Contract\CardInterface;
 use Olek\WayForPay\Credential\Credential;
+use Olek\WayForPay\Domain\ApplePay;
 use Olek\WayForPay\Domain\Card;
 use Olek\WayForPay\Domain\CardToken;
 use Olek\WayForPay\Domain\Client;
+use Olek\WayForPay\Domain\GooglePay;
 use Olek\WayForPay\Enum\AuthType;
 use Olek\WayForPay\Enum\TransactionSecure;
 use Olek\WayForPay\Enum\TransactionType;
 use Olek\WayForPay\Exception\WayForPayException;
 use Olek\WayForPay\Response\ChargeResponse;
 
-class ChargeRequest extends ApiRequest
+readonly class ChargeRequest extends ApiRequest
 {
     public function __construct(
-        Credential                         $credential,
-        private readonly string            $orderReference,
-        private readonly float             $amount,
-        private readonly string            $currency,
-        private readonly ProductCollection $products,
-        private readonly DateTimeInterface $orderDate,
-        private readonly string            $merchantDomainName,
-        private readonly ?Card             $card = null,
-        private readonly ?CardToken        $recToken = null,
-        private readonly TransactionType   $merchantTransactionType = TransactionType::AUTO,
-        private readonly TransactionSecure $merchantTransactionSecureType = TransactionSecure::AUTO,
-        private readonly ?Client            $client = null,
-        private readonly ?string           $serviceUrl = null,
-        private readonly ?int              $holdTimeout = null,
-        private readonly AuthType          $merchantAuthType = AuthType::SIMPLE_SIGNATURE,
-        private readonly ?string           $socialUri = null,
+        Credential                $credential,
+        private string            $orderReference,
+        private float             $amount,
+        private string            $currency,
+        private ProductCollection $products,
+        private DateTimeInterface $orderDate,
+        private string            $merchantDomainName,
+        private CardInterface     $card,
+        private TransactionType   $merchantTransactionType = TransactionType::AUTO,
+        private TransactionSecure $merchantTransactionSecureType = TransactionSecure::AUTO,
+        private ?Client           $client = null,
+        private ?string           $serviceUrl = null,
+        private ?int              $holdTimeout = null,
+        private AuthType          $merchantAuthType = AuthType::SIMPLE_SIGNATURE,
+        private ?string           $socialUri = null,
     ) {
         parent::__construct($credential);
-
-        if ($this->card === null && $this->recToken === null) {
-            throw new InvalidArgumentException("Card or CardToken required");
-        }
 
         if (strlen($currency) !== 3) {
             throw new InvalidArgumentException("Currency must contain 3 chars");
@@ -106,20 +104,27 @@ class ChargeRequest extends ApiRequest
             "productCount"                  => $this->products->getCounts(),
         ]);
 
-        if ($this->card) {
-            $data = array_merge($data, [
-                "card" => $this->card->getCard(),
-                "expMonth" => sprintf("%02d", $this->card->getMonth()),
-                "expYear" => (string)$this->card->getYear(),
-                "cardCvv" => (string)$this->card->getCvv(),
-                "cardHolder" => $this->card->getHolder(),
-            ]);
-        } elseif ($this->recToken) {
-            $data = array_merge($data, [
-                "recToken" => $this->recToken->getToken(),
-            ]);
+        if ($this->card instanceof Card) {
+            $data["card"] = $this->card->getCard();
+            $data["expMonth"] = sprintf("%02d", $this->card->getMonth());
+            $data["expYear"] = (string)$this->card->getYear();
+            $data["cardCvv"] = (string)$this->card->getCvv();
+            $data["cardHolder"] = $this->card->getHolder();
+        } elseif ($this->card instanceof CardToken) {
+            $data["recToken"] = $this->card->getToken();
+        } elseif ($this->card instanceof GooglePay) {
+            $data["gpApiVersionMinor"] = $this->card->apiVersionMinor;
+            $data["gpApiVersion"] = $this->card->apiVersion;
+            $data["gpPMDescription"] = $this->card->paymentMethodData->description;
+            $data["gpPMType"] = $this->card->paymentMethodData->type;
+            $data["gpPMTCardNetwork"] = $this->card->paymentMethodData->info->cardNetwork;
+            $data["gpPMTCardDetails"] = $this->card->paymentMethodData->info->cardDetails;
+            $data["gpTokenizationType"] = $this->card->paymentMethodData->tokenizationData->type;
+            $data["gpToken"] = $this->card->paymentMethodData->tokenizationData->token;
+        } elseif ($this->card instanceof ApplePay) {
+            $data["applePayString"] = $this->card->token;
         } else {
-            throw new WayForPayException("Card or token required");
+            throw new WayForPayException("Card or CardToken or GooglePay required");
         }
 
         return $data;

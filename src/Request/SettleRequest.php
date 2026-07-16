@@ -5,13 +5,13 @@ namespace Olek\WayForPay\Request;
 use Olek\WayForPay\Credential\Credential;
 use Olek\WayForPay\Response\SettleResponse;
 
-class SettleRequest extends ApiRequest
+readonly class SettleRequest extends ApiRequest
 {
     public function __construct(
         Credential              $credential,
-        private readonly string $orderReference,
-        private readonly float  $amount,
-        private readonly string $currency,
+        private string $orderReference,
+        private float  $amount,
+        private string $currency,
     ) {
         parent::__construct($credential);
     }

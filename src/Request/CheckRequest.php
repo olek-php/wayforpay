@@ -5,12 +5,12 @@ namespace Olek\WayForPay\Request;
 use Olek\WayForPay\Credential\Credential;
 use Olek\WayForPay\Response\CheckResponse;
 
-class CheckRequest extends ApiRequest
+readonly class CheckRequest extends ApiRequest
 {
 
     public function __construct(
         Credential $credential,
-        private readonly string $orderReference
+        private string $orderReference
     )
     {
         parent::__construct($credential);

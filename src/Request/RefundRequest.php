@@ -5,14 +5,14 @@ namespace Olek\WayForPay\Request;
 use Olek\WayForPay\Credential\Credential;
 use Olek\WayForPay\Response\RefundResponse;
 
-class RefundRequest extends ApiRequest
+readonly class RefundRequest extends ApiRequest
 {
     public function __construct(
         Credential $credential,
-        private readonly string $orderReference,
-        private readonly string $amount,
-        private readonly string $currency,
-        private readonly string $comment,
+        private string $orderReference,
+        private string $amount,
+        private string $currency,
+        private string $comment,
     ) {
         parent::__construct($credential);
     }

@@ -11,14 +11,13 @@ use Olek\WayForPay\Helper\SignatureHelper;
 use Symfony\Component\HttpClient\HttpClient;
 use Throwable;
 
-abstract class ApiRequest implements RequestInterface
+abstract readonly class ApiRequest implements RequestInterface
 {
     public const API_VERSION = 1;
 
-
-    public function __construct(private readonly CredentialInterface $credential)
-    {
-    }
+    public function __construct(
+        private CredentialInterface $credential,
+    ) {}
 
     abstract protected function getType(): string;
 

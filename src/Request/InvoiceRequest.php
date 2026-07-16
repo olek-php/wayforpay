@@ -9,22 +9,22 @@ use Olek\WayForPay\Domain\Client;
 use Olek\WayForPay\Domain\PaymentSystems;
 use Olek\WayForPay\Response\InvoiceResponse;
 
-class InvoiceRequest extends ApiRequest
+readonly class InvoiceRequest extends ApiRequest
 {
     public function __construct(
         Credential        $credential,
-        private readonly string            $orderReference,
-        private readonly float             $amount,
-        private readonly string            $currency,
-        private readonly ProductCollection $products,
-        private readonly DateTimeInterface $orderDate,
-        private readonly string            $merchantDomainName,
-        private readonly ?Client           $client = null,
-        private readonly ?PaymentSystems   $paymentSystems = null,
-        private readonly ?string           $serviceUrl = null,
-        private readonly ?int              $holdTimeout = null,
-        private readonly ?int              $orderTimeout = null,
-        private readonly ?string           $language = null
+        private string            $orderReference,
+        private float             $amount,
+        private string            $currency,
+        private ProductCollection $products,
+        private DateTimeInterface $orderDate,
+        private string            $merchantDomainName,
+        private ?Client           $client = null,
+        private ?PaymentSystems   $paymentSystems = null,
+        private ?string           $serviceUrl = null,
+        private ?int              $holdTimeout = null,
+        private ?int              $orderTimeout = null,
+        private ?string           $language = null
     ) {
         parent::__construct($credential);
     }

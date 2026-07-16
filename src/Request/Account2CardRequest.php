@@ -6,22 +6,22 @@ use Olek\WayForPay\Enum\AuthType;
 use Olek\WayForPay\Response\Account2CardResponse;
 use Olek\WayForPay\Credential\Credential;
 
-class Account2CardRequest extends ApiRequest
+readonly class Account2CardRequest extends ApiRequest
 {
     public function __construct(
         Credential                $credential,
-        private readonly string   $orderReference,
-        private readonly string   $debetOrderRef,
-        private readonly float    $amount,
-        private readonly string   $currency,
-        private readonly string   $cardBeneficiary,
-        private readonly string   $rec2Token,
-        private readonly AuthType $merchantAuthType = AuthType::SIMPLE_SIGNATURE,
-        private readonly ?string  $serviceUrl = null,
-        private readonly ?string  $recipientFirstName = null,
-        private readonly ?string  $recipientLastName = null,
-        private readonly ?string  $recipientPhone = null,
-        private readonly ?string  $recipientEmail = null
+        private string   $orderReference,
+        private string   $debetOrderRef,
+        private float    $amount,
+        private string   $currency,
+        private string   $cardBeneficiary,
+        private string   $rec2Token,
+        private AuthType $merchantAuthType = AuthType::SIMPLE_SIGNATURE,
+        private ?string  $serviceUrl = null,
+        private ?string  $recipientFirstName = null,
+        private ?string  $recipientLastName = null,
+        private ?string  $recipientPhone = null,
+        private ?string  $recipientEmail = null
     ) {
         parent::__construct($credential);
     }
