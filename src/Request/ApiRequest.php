@@ -50,7 +50,10 @@ abstract readonly class ApiRequest implements RequestInterface
     protected function sendRequest(): array
     {
         $options = [
-            "json" => array_filter($this->getTransactionData())
+            "json" => array_filter(
+                $this->getTransactionData(),
+                static fn($value): bool => $value !== null && $value !== '' && $value !== []
+            )
         ];
 
         try {
