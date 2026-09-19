@@ -19,6 +19,11 @@ abstract readonly class ApiRequest implements RequestInterface
         private CredentialInterface $credential,
     ) {}
 
+    protected function getUrl(): string
+    {
+        return "https://api.wayforpay.com/api";
+    }
+
     abstract protected function getType(): string;
 
     protected function getTransactionData(): array
@@ -58,7 +63,7 @@ abstract readonly class ApiRequest implements RequestInterface
 
         try {
             $http = HttpClient::create();
-            $response = $http->request("POST", "https://api.wayforpay.com/api", $options);
+            $response = $http->request("POST", $this->getUrl(), $options);
             $data = $response->toArray(false);
         } catch (Throwable $e) {
             throw new ApiException(new Reason(-1, $e->getMessage()));
